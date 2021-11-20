@@ -1,0 +1,81 @@
+<!-- ./client/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" >
+    <!-- <link href="/style_login.css" rel="stylesheet" type="text/css"> -->
+    <title>聊天室開發--登入</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+  </head>
+  <body>
+    <!-- <form action="./chat_room", method="get"> -->
+         <div class="input_area">
+            <p>帳號：<input id="account" type="text" placeholder="請輸入帳號" /></p>
+            <p>密碼：<input id="password" type="password" placeholder="請輸入密碼" /></p>
+            <p>用戶名：<input id="username" type="text" placeholder="請輸入用戶名稱(登入免填)" /></p>
+            <button type="submit" class="login">登入</button>
+             <button type="button" class="sign_up">註冊</button>
+        </div>
+    <!-- </form> -->
+
+    <script>
+        const socket = io("http://localhost:5000");
+        
+        //登入功能
+        document.querySelector('.login').addEventListener('click', () => {
+      login();
+      });
+      function login(){
+        var account = document.querySelector('#account').value;
+        var password = document.querySelector('#password').value;
+        if (!account || !password) {
+          alert('請輸入帳號密碼以進行登入');
+          return;
+        }else{
+            var user_info = {
+            account: account,
+            password: password,
+            username : ''
+        };
+        socket.emit('login', user_info);
+        }
+      }
+      //接收登入的結果
+      socket.on('login', (result) =>{
+        if(result == true){
+            alert("登入成功！");
+            socket.emit('to_chatroom', result);
+        }else{
+            alert("登入失敗：帳號或密碼有誤！");
+        }
+      });
+
+      //註冊功能
+      document.querySelector('.sign_up').addEventListener('click', () => {
+      sign_up();
+      });
+      function sign_up(){
+        var account = document.querySelector('#account').value;
+        var password = document.querySelector('#password').value;
+        var username = document.querySelector('#username').value;
+        if (!account || !password || !username) {
+          alert('請輸入帳號密碼及用戶名稱以進行註冊');
+          return;
+        }else{
+            var user_info = {
+            account: account,
+            password: password,
+            username : username
+        };
+        socket.emit('sign_up', user_info);
+        }
+      }
+      //接收註冊的結果
+      socket.on('sign_up', (result) =>{
+          alert(result)
+      });
+    </script>
+  </body>
+</html>

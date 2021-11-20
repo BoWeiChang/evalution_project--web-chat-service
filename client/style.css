@@ -1,0 +1,140 @@
+body {
+    padding: 50px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    background-color: #DDDDFF;
+  }
+  
+  .eight_wide_column {
+    padding: 10px 5px;
+    height: 500px;
+    width: 800px;
+    background: #F3F3FA;
+    float:left;
+  }
+  
+  .eight_wide_column .chat {
+    display: inherit;
+    margin: 5px 0 ;
+    height: 450px;
+    overflow:hidden;
+    overflow-y: scroll;
+  }
+  
+  .eight_wide_column .chat .left_circular_group {
+    width:800px;
+    float:left
+  }
+ 
+
+  .eight_wide_column .chat .left_circular_group .speech {
+    display: flex;
+    flex-direction: row;
+    word-wrap: normal;
+  }
+  
+  .eight_wide_column .chat .left_circular_group .speech .user {
+    padding: 0 10px;
+    font-weight: bolder;
+  }
+
+  .eight_wide_column .chat .left_circular_group .speech .content {
+    padding: 0 10px;
+  }
+
+  .eight_wide_column .chat .left_circular_group .speech .time {
+    padding-left: 10px;
+    font-size: 10px;
+    line-height: 18px;
+    color: #3C3C3C;
+  }
+  
+  .eight_wide_column .chat .right_circular_group {
+    width:800px;
+    float:right;
+  }
+
+  .eight_wide_column .chat .right_circular_group .speech {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    word-wrap: normal;
+  }
+  
+  .eight_wide_column .chat .right_circular_group .speech .user {
+    padding: 0 10px;
+    font-weight: bolder;
+    
+  }
+
+  .eight_wide_column .chat .right_circular_group .speech .content {
+    padding: 0 10px;
+  }
+  
+  .eight_wide_column .chat .right_circular_group .speech .time {
+    padding-right: 10px;
+    font-size: 10px;
+    line-height: 20px;
+    color: #3C3C3C;
+  }
+
+  .eight_wide_column .input_area {
+    /* margin-bottom: 10px; */
+    /* height: 50px; */
+    position: absolute; 
+    /* bottom: 80px; */
+    background-color: inherit;
+  }
+  
+  .input_area input {
+    padding: 0 5px;
+    height: 25px;
+    width: 600px;
+  }
+  
+  .input_area input:first-child {
+    width: 60px;
+  }
+  
+  .input_area button {
+    height: 32px;
+    width: 100px;
+  }
+
+  .four_wide_column {
+    padding: 10px 5px;
+    height: 500px;
+    width: 400px;
+    background: #FFE6FF;
+    overflow-y: scroll;
+  }
+
+  .four_wide_column .member{
+    padding: 10px 5px;
+    display: inherit;
+    background-color: #FFFFFF;
+    overflow: hidden;
+  }
+
+  .four_wide_column .member .item{
+    padding: 10px 5px;
+    background-color: #FFFFFF;
+  }
+
+  .four_wide_column .member .selected_item{
+    padding: 10px 5px;
+    background-color: #004B97;
+    color: #FFFFFF;
+  }
+
+
+  /* <div class="four wide column">
+  <br>
+  <div class="member">
+    <div class="item">
+      <div class="header">Moses</div>
+    </div>
+    <div class="selected item">
+      <div class="header">Mosa</div>
+    </div>
+  </div> */
+/* </div> */

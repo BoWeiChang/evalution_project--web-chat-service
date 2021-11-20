@@ -1,0 +1,166 @@
+<!-- ./client/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" >
+    <link href="../client/style.css" rel="stylesheet" type="text/css">
+    <title>聊天室開發</title>
+  </head>
+  <body>
+    <!-- 測試區域  -->
+    <!-- <button onClick="sendMsg()">Hit Me</button>  -->
+
+    <!--  聊天室模板  -->
+    
+    <div class="eight_wide_column">
+      <!-- / 頂部主要聊天訊息 -->
+      <!-- 對話框 -->
+      <div class="chat">
+            <!-- / 左側群組 -->
+        <div class="left_circular_group">
+          <div class="speech">
+            <div class="user">Moses：</div>
+            <div class="content">大家好!!</div>
+            <div class="time">2021-11-13 14:30:06</div>
+          </div>
+        </div>
+        <div class="left_circular_group">
+          <div class="speech">
+            <div class="user">Moses：</div>
+            <div class="content">天氣好好！！</div>
+            <div class="time">2021-11-13 14:30:25</div>
+          </div>
+        </div>
+        <!-- / 左側群組 -->
+
+        <!-- 右側群組 -->
+        <div class="right_circular_group">
+          <div class="speech">
+            <div class="time">2021-11-13 14:30:25</div>
+            <div class="content">額⋯⋯</div>
+            <!-- <div class="user">Mosa：</div> -->
+          </div>
+        </div>
+        <div class="right_circular_group">
+          <div class="speech">
+            <div class="time">2021-11-13 14:30:25</div>
+            <div class="content">跟我聊天？</div>
+            <!-- <div class="user">Mosa</div> -->
+          </div>
+        </div>
+        <div class="right_circular_group">
+          <div class="speech">
+            <!-- <div class="user">以上為模板示意圖</div> -->
+            <div class="time">以上皆為模板示意圖</div>
+            <div class="content">以上皆為模板示意圖</div>
+          </div>
+        </div>
+        <!-- / 右側群組 -->
+      </div>
+        <!-- / 對話框 -->
+        <!-- / 頂部主要聊天訊息 -->
+          
+          <!-- 底部輸入欄位 -->
+      <div class="input_area">
+          <input id="name" type="text" placeholder="your name" />
+          <input id="message" type="text" placeholder="input the message" />
+          <button type="button">送出</button>
+      </div>
+          <!-- / 底部輸入欄位 -->
+    </div>
+  <!-- / 左側欄位 -->
+
+  <!-- 右側欄位 -->
+    <div class="four_wide_column">
+      <br>
+      <div class="member">
+        <div class="item">
+          <div class="header">Moses</div>
+        </div>
+        <div class="selected_item">
+          <div class="header">Mosa</div>
+        </div>
+        <div class="item">
+          <div class="header">Mos</div>
+        </div>
+        <div class="item">
+          <div class="header">聊天室成員示意圖</div>
+        </div>
+      </div>
+    </div>
+      <!-- / 右側欄位 -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/locale/zh-tw.js'></script>
+
+    <script>
+      const socket = io("http://localhost:5000");
+      
+      //取得表單上的名稱和內容，並利用 socket.emit 發送訊息
+      document.querySelector('button').addEventListener('click', () => {
+      send();
+      });
+      
+      function send() {
+        var name = document.querySelector('#name').value;
+        var message = document.querySelector('#message').value;
+        if (!message && !name) {
+          alert('請輸入大名和訊息');
+          return;
+        }
+        var data = {
+          name: name,
+          message: message,
+          time : moment().format('YYYY-MM-DD HH:mm:ss')
+        };
+        socket.emit('message', data);
+        document.querySelector('#name').value = '';
+        document.querySelector('#message').value = '';
+      }
+      //測試用函式
+      //function sendMsg() {
+      //  const data = {
+      //    name: 'Robby',
+      //    message: 'Hi~',
+      //    time: '2021-11-15'
+      //  };
+      //  socket.emit("message", data);
+      //}
+
+      // 注意是否有新的訊息發生
+      socket.on("message", (data) => {
+        console.log(data);
+        appendData([data]);
+      })
+      //新增對話資訊到對話視窗中
+      function appendData(object) {
+
+        var chats = document.querySelector('.chat');
+        var html = chats.innerHTML;
+
+        object.forEach(element => {
+        html +=
+        `<div class="left_circular_group">
+            <div class="speech">
+              <div class="user">${element.name}:</div>
+              <div class="time">${element.time}</div>  
+              <div class="content">${element.message}</div>
+            </div>
+          </div>
+          `;
+        });
+        chats.innerHTML = html.trim();
+
+      }
+      //讀取歷史訊息並顯示
+      socket.on('history', (object) => {
+        if (object.length > 0) {
+          appendData(object);
+        }
+      });
+    </script>
+  </body>
+</html>
