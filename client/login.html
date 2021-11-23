@@ -10,19 +10,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
   </head>
   <body>
-    <!-- <form action="./chat_room", method="get"> -->
-         <div class="input_area">
-            <p>帳號：<input id="account" type="text" placeholder="請輸入帳號" /></p>
-            <p>密碼：<input id="password" type="password" placeholder="請輸入密碼" /></p>
-            <p>用戶名：<input id="username" type="text" placeholder="請輸入用戶名稱(登入免填)" /></p>
-            <button type="submit" class="login">登入</button>
-             <button type="button" class="sign_up">註冊</button>
-        </div>
-    <!-- </form> -->
+    <div class="input_area">
+        <p>帳號：<input id="account" type="text" placeholder="請輸入帳號" /></p>
+        <p>密碼：<input id="password" type="password" placeholder="請輸入密碼" /></p>
+        <p>用戶名：<input id="username" type="text" placeholder="請輸入用戶名稱(登入免填)" /></p>
+        <button type="submit" class="login">登入</button>
+        <button type="button" class="sign_up">註冊</button>
+    </div>
 
     <script>
         const socket = io("http://localhost:5000");
-        
+
         //登入功能
         document.querySelector('.login').addEventListener('click', () => {
       login();
@@ -43,10 +41,14 @@
         }
       }
       //接收登入的結果
-      socket.on('login', (result) =>{
-        if(result == true){
+      socket.on('login_result', (info) =>{
+        if(info.result == true){
             alert("登入成功！");
-            socket.emit('to_chatroom', result);
+            //**頁面轉換
+            var destination = '/chat_room';
+            socket.emit('to_chatroom', info);
+            window.location.href = destination;
+
         }else{
             alert("登入失敗：帳號或密碼有誤！");
         }

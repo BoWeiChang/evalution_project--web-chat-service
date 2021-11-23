@@ -107,18 +107,19 @@
       function send() {
         var name = document.querySelector('#name').value;
         var message = document.querySelector('#message').value;
-        if (!message && !name) {
+        if (!message || !name) {
           alert('請輸入大名和訊息');
           return;
+        }else{
+          var data = {
+            name: name,
+            message: message,
+            time : moment().format('YYYY-MM-DD HH:mm:ss')
+          };
+          socket.emit('message', data);
+          document.querySelector('#name').value = '';
+          document.querySelector('#message').value = '';
         }
-        var data = {
-          name: name,
-          message: message,
-          time : moment().format('YYYY-MM-DD HH:mm:ss')
-        };
-        socket.emit('message', data);
-        document.querySelector('#name').value = '';
-        document.querySelector('#message').value = '';
       }
       //測試用函式
       //function sendMsg() {

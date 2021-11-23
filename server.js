@@ -67,18 +67,17 @@ var apiRouter = new APIRouter.ApiRouter;
 app.use("/client", Express.static(path.join(__dirname, 'client')));
 // 設置伺服器的架構
 app.set("port", process.env.PORT || 5000);
-app.use('', apiRouter.router);
+app.use("", apiRouter.router);
 app.use(function (req, res, next) {
     res.type('text/plain');
     res.status(404);
     res.send('Page is not found.');
-    next;
 });
 //測試是否執行(未成功執行)
-// app.get("/", (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
-//     console.log('hello');
-//     res.send('GET request to homepage');
-//     next;
+// app.post("/",  (req: Express.Request, res: Express.Response, next: Express.NextFunction)=>{
+//     console.log('entry chatroom');
+//     // res.send('Get request to chat_room');
+//     res.redirect('./chat_room');
 // });
 var http = require("http").Server(app);
 // 架設socket.io在我們的伺服器上
@@ -95,6 +94,11 @@ io.on("connection", function (socket) { return __awaiter(void 0, void 0, void 0,
                 console.log(socket.rooms);
                 socket_handler = new socketHandler.SocketHandler();
                 socket_handler.connect();
+                return [4 /*yield*/, socket_handler.getMessages()];
+            case 1:
+                history = _a.sent();
+                socket_id = socket.id;
+                io.to(socket_id).emit('history', history);
                 //注意註冊的消息並傳送資訊
                 socket.on('sign_up', function (user_info) { return __awaiter(void 0, void 0, void 0, function () {
                     var result;
@@ -112,43 +116,27 @@ io.on("connection", function (socket) { return __awaiter(void 0, void 0, void 0,
                 }); });
                 //登入
                 socket.on('login', function (user_info) { return __awaiter(void 0, void 0, void 0, function () {
-                    var result;
+                    var result, info;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0: return [4 /*yield*/, socket_handler.login(user_info)];
                             case 1:
                                 result = _a.sent();
-                                socket.emit("login", result);
+                                info = {
+                                    result: result,
+                                    user_info: user_info
+                                };
+                                socket.emit("login_result", info);
                                 return [2 /*return*/];
                         }
                     });
                 }); });
-                //result == true --> 登入成功，頁面轉換至聊天室畫面並載入歷史對話
-                socket.on('to_chatroom', function (result) { return __awaiter(void 0, void 0, void 0, function () {
+                // //result == true --> 登入成功，頁面轉換至聊天室畫面並載入歷史對話
+                socket.on('to_chatroom', function (info) { return __awaiter(void 0, void 0, void 0, function () {
                     return __generator(this, function (_a) {
-                        if (result == true) {
-                            console.log('change to chatroom');
-                            app.use("/", function (req, res, next) {
-                                console.log('entry chatroom');
-                                res.send('GET request to chat room');
-                                next;
-                                res.redirect('./chat_room');
-                                next;
-                            });
-                            //取得聊天室中過往的所有對話資訊
-                            // const history = await socket_handler.getMessages();
-                            // const socket_id = socket.id;
-                            // // console.log(socket_id);
-                            // io.to(socket_id).emit('history', history);
-                        }
                         return [2 /*return*/];
                     });
                 }); });
-                return [4 /*yield*/, socket_handler.getMessages()];
-            case 1:
-                history = _a.sent();
-                socket_id = socket.id;
-                io.to(socket_id).emit('history', history);
                 //注意來自於客戶端的訊息
                 socket.on("message", function (data) {
                     console.log(data);

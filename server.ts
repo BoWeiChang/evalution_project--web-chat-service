@@ -13,21 +13,19 @@ app.use("/client", Express.static(path.join(__dirname , 'client')));
 
 // 設置伺服器的架構
 app.set("port", process.env.PORT || 5000);
-app.use('', apiRouter.router);
+app.use("", apiRouter.router);
 
 app.use((req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
     res.type('text/plain');
     res.status(404);
     res.send('Page is not found.');
-    next;
 })
 
 //測試是否執行(未成功執行)
-// app.get("/", (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
-//     console.log('hello');
-//     res.send('GET request to homepage');
-//     next;
-
+// app.post("/",  (req: Express.Request, res: Express.Response, next: Express.NextFunction)=>{
+//     console.log('entry chatroom');
+//     // res.send('Get request to chat_room');
+//     res.redirect('./chat_room');
 // });
 
 var http : any = require("http").Server(app);
@@ -44,6 +42,11 @@ io.on("connection", async (socket: any) => {
     //藉由 socketHandler 負責伺服器與資料庫之間的溝通 
     const socket_handler = new socketHandler.SocketHandler();
     socket_handler.connect();
+
+    //取得聊天室中過往的所有對話資訊(測試)
+    const history = await socket_handler.getMessages();
+            const socket_id = socket.id;
+            io.to(socket_id).emit('history', history);
     
     //注意註冊的消息並傳送資訊
     socket.on('sign_up', async(user_info: any) =>{
@@ -55,32 +58,22 @@ io.on("connection", async (socket: any) => {
     //登入
     socket.on('login', async(user_info: any) =>{
         const result = await socket_handler.login(user_info);
-        socket.emit("login", result);
+        var info = {
+            result : result,
+            user_info: user_info
+        };
+        socket.emit("login_result", info);
     });
     
-    //result == true --> 登入成功，頁面轉換至聊天室畫面並載入歷史對話
-    socket.on('to_chatroom', async(result: any) =>{
-        if (result == true){
-            console.log('change to chatroom');
-            //app.use不會執行(原因待查)
-            app.use("/", (req: Express.Request, res: Express.Response, next: Express.NextFunction)=>{
-                console.log('entry chatroom');
-                res.send('GET request to chat room');
-                res.redirect('./chat_room');
-            });
-              //取得聊天室中過往的所有對話資訊
-            // const history = await socket_handler.getMessages();
-            // const socket_id = socket.id;
-            // // console.log(socket_id);
-            // io.to(socket_id).emit('history', history);
-        }
+    // //result == true --> 登入成功，頁面轉換至聊天室畫面並載入歷史對話
+    socket.on('to_chatroom', async(info: any) =>{
+        // 取得聊天室中過往的所有對話資訊
+    //     const history =  await socket_handler.getMessages();
+    //     const socket_id = socket.id;
+    // // console.log(socket_id);
+    //     io.to(socket_id).emit('history', history);
 
-    });    
-        
-    //取得聊天室中過往的所有對話資訊
-    const history = await socket_handler.getMessages();
-            const socket_id = socket.id;
-            io.to(socket_id).emit('history', history);
+    });
     
     //注意來自於客戶端的訊息
     socket.on("message", (data: any) => {
